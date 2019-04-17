@@ -22,11 +22,8 @@ module AuditLog
             from: from.to_json,
             to: to.to_json,
             unchanged: unchanged.to_json,
-            who_class: AuditLog.who.class.name,
-            who_id: AuditLog.who.id,
-            who_name: AuditLog.who.name,
-            who_email: AuditLog.who.email,
-          )
+            who: AuditLog.who
+          ) if AuditLog.logger
         end
 
         before_update :save_audits
@@ -47,11 +44,8 @@ module AuditLog
               from: from.to_json,
               to: to.to_json,
               unchanged: unchanged.to_json,
-              who_class: AuditLog.who.class.name,
-              who_id: AuditLog.who.id,
-              who_name: AuditLog.who.name,
-              who_email: AuditLog.who.email,
-            )
+              who: AuditLog.who
+            ) if AuditLog.logger
           end
         end
       end
@@ -69,8 +63,18 @@ module AuditLog
     end
 
     def auditlog_user
-      AuditLog.who = auditlog_set_user
-      AuditLog.logger = Rails.logger
+      if auditlog_set_user
+        user = auditlog_set_user
+        AuditLog.who = {
+          klass: user.class.name,
+          id: user.id,
+          name: user.name,
+          email: user.email,          
+        }
+      else
+        AuditLog.who = nil
+      end
+      AuditLog.logger ||= Logger.new("#{Rails.root}/log/audit.log")
     end
   end
 
