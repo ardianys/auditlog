@@ -74,7 +74,8 @@ module AuditLog
       else
         AuditLog.who = nil
       end
-      AuditLog.logger ||= Logger.new("#{Rails.root}/log/audit.log")
+      # AuditLog.logger ||= Logger.new("#{Rails.root}/log/audit.log")
+      AuditLog.logger ||= RemoteSyslogLogger.new('logs3.papertrailapp.com', ENV['PAPERTRAIL_PORT'])
     end
   end
 
