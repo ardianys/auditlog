@@ -14,7 +14,7 @@ module AuditLog
         after_create :save_all_audits
         define_method :save_all_audits do
 
-          from = {}
+          from = {klass: self.class.name}
           to = Hash[audited_fields.map { |k| [k, send(k)] }]
           unchanged = {}
 
@@ -39,6 +39,8 @@ module AuditLog
                 [f, send(f)]
               end
             ]
+
+            from[:klass] = self.class.name
 
             AuditLog.logger.debug(
               from: from.to_json,
