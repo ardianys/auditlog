@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    auditlog (0.0.3)
+    auditlog (0.0.5)
       rails (>= 4.0.0)
 
 GEM
